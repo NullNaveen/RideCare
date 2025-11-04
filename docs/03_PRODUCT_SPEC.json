@@ -1,0 +1,401 @@
+{
+  "product": {
+    "name": "RideCare",
+    "version": "1.0.0",
+    "last_updated": "2025-11-04",
+    "mission": "Dead-simple, privacy-first bike maintenance tracker with automatic reminders",
+    "platforms": ["iOS 13+", "Android 10+"]
+  },
+  "target_audience": [
+    {
+      "segment": "Commuter Riders",
+      "percentage": 60,
+      "age_range": "22-35",
+      "needs": ["Automatic reminders", "Minimal friction", "Dark mode"],
+      "devices": ["Android (budget-mid)", "iOS (premium)"]
+    },
+    {
+      "segment": "Touring Enthusiasts",
+      "percentage": 25,
+      "age_range": "28-45",
+      "needs": ["Offline mode", "Trip history", "Fuel economy", "Analytics"],
+      "devices": ["iOS", "Android flagship"]
+    },
+    {
+      "segment": "Casual Riders",
+      "percentage": 15,
+      "age_range": "18-25",
+      "needs": ["Simple UI", "Gentle nudges", "Educational content"],
+      "devices": ["Android (entry-level)"]
+    }
+  ],
+  "features": {
+    "mvp": [
+      {
+        "id": "F01",
+        "name": "User account",
+        "priority": "Must",
+        "complexity": "Low",
+        "dev_effort_days": 3
+      },
+      {
+        "id": "F02",
+        "name": "Bike onboarding wizard",
+        "priority": "Must",
+        "complexity": "Medium",
+        "dev_effort_days": 5
+      },
+      {
+        "id": "F03",
+        "name": "GPS trip tracking",
+        "priority": "Must",
+        "complexity": "High",
+        "dev_effort_days": 10
+      },
+      {
+        "id": "F04",
+        "name": "Kilometer tally",
+        "priority": "Must",
+        "complexity": "Low",
+        "dev_effort_days": 2
+      },
+      {
+        "id": "F05",
+        "name": "Maintenance rules engine",
+        "priority": "Must",
+        "complexity": "High",
+        "dev_effort_days": 8
+      },
+      {
+        "id": "F06",
+        "name": "Push notifications",
+        "priority": "Must",
+        "complexity": "Medium",
+        "dev_effort_days": 4
+      },
+      {
+        "id": "F07",
+        "name": "Maintenance history",
+        "priority": "Must",
+        "complexity": "Low",
+        "dev_effort_days": 3
+      },
+      {
+        "id": "F08",
+        "name": "Offline mode",
+        "priority": "Must",
+        "complexity": "Medium",
+        "dev_effort_days": 6
+      },
+      {
+        "id": "F09",
+        "name": "Dark mode",
+        "priority": "Must",
+        "complexity": "Low",
+        "dev_effort_days": 2
+      },
+      {
+        "id": "F10",
+        "name": "Privacy controls",
+        "priority": "Must",
+        "complexity": "Medium",
+        "dev_effort_days": 4
+      }
+    ],
+    "beta": [
+      {
+        "id": "F11",
+        "name": "BLE pairing",
+        "priority": "Should",
+        "complexity": "Very High",
+        "dev_effort_days": 12
+      },
+      {
+        "id": "F12",
+        "name": "Receipt upload",
+        "priority": "Should",
+        "complexity": "Medium",
+        "dev_effort_days": 5
+      },
+      {
+        "id": "F13",
+        "name": "Cost tracking",
+        "priority": "Should",
+        "complexity": "Low",
+        "dev_effort_days": 3
+      },
+      {
+        "id": "F14",
+        "name": "Calendar integration",
+        "priority": "Should",
+        "complexity": "Medium",
+        "dev_effort_days": 4
+      },
+      {
+        "id": "F15",
+        "name": "Fuel economy tracking",
+        "priority": "Should",
+        "complexity": "Medium",
+        "dev_effort_days": 6
+      },
+      {
+        "id": "F16",
+        "name": "Trip history with maps",
+        "priority": "Should",
+        "complexity": "Medium",
+        "dev_effort_days": 5
+      },
+      {
+        "id": "F17",
+        "name": "Service center locator",
+        "priority": "Should",
+        "complexity": "Medium",
+        "dev_effort_days": 4
+      },
+      {
+        "id": "F18",
+        "name": "Time-based reminders",
+        "priority": "Should",
+        "complexity": "Low",
+        "dev_effort_days": 2
+      },
+      {
+        "id": "F19",
+        "name": "Cloud sync",
+        "priority": "Should",
+        "complexity": "High",
+        "dev_effort_days": 8
+      }
+    ],
+    "v1_0": [
+      {
+        "id": "F20",
+        "name": "Predictive maintenance",
+        "priority": "Could",
+        "complexity": "Very High",
+        "dev_effort_days": 20
+      },
+      {
+        "id": "F21",
+        "name": "Multi-vehicle support",
+        "priority": "Could",
+        "complexity": "Medium",
+        "dev_effort_days": 5
+      },
+      {
+        "id": "F22",
+        "name": "Community tips",
+        "priority": "Could",
+        "complexity": "Low",
+        "dev_effort_days": 3
+      },
+      {
+        "id": "F23",
+        "name": "Trip sharing",
+        "priority": "Could",
+        "complexity": "Low",
+        "dev_effort_days": 4
+      },
+      {
+        "id": "F24",
+        "name": "Home screen widget",
+        "priority": "Could",
+        "complexity": "Medium",
+        "dev_effort_days": 6
+      }
+    ]
+  },
+  "maintenance_rules": {
+    "types": ["km_based", "time_based", "combined", "one_time"],
+    "categories": ["service", "oil_change", "chain_lube", "brake_check", "tyre_inspection", "battery"],
+    "notification_thresholds_km": [200, 100, 0],
+    "manufacturer_defaults": {
+      "Hero": {
+        "service": {"km": 6000, "months": 6},
+        "oil_change": {"km": 3000, "months": 3},
+        "chain_lube": {"km": 500, "days": 15},
+        "brake_check": {"km": 12000, "months": 12},
+        "tyre_inspection": {"km": 18000, "months": 18},
+        "battery": {"months": 24}
+      },
+      "Bajaj": {
+        "service": {"km": 4000, "months": 4},
+        "oil_change": {"km": 4000, "months": 4},
+        "chain_lube": {"km": 500, "days": 15},
+        "brake_check": {"km": 12000, "months": 12},
+        "tyre_inspection": {"km": 18000, "months": 18},
+        "battery": {"months": 24}
+      },
+      "TVS": {
+        "service": {"km": 6000, "months": 6},
+        "oil_change": {"km": 3000, "months": 3},
+        "chain_lube": {"km": 500, "days": 15},
+        "brake_check": {"km": 12000, "months": 12},
+        "tyre_inspection": {"km": 18000, "months": 18},
+        "battery": {"months": 24}
+      },
+      "Honda": {
+        "service": {"km": 4000, "months": 4},
+        "oil_change": {"km": 4000, "months": 4},
+        "chain_lube": {"km": 500, "days": 15},
+        "brake_check": {"km": 12000, "months": 12},
+        "tyre_inspection": {"km": 18000, "months": 18},
+        "battery": {"months": 24}
+      },
+      "Royal Enfield": {
+        "service": {"km": 5000, "months": 6},
+        "oil_change": {"km": 5000, "months": 6},
+        "chain_lube": {"km": 500, "days": 15},
+        "brake_check": {"km": 10000, "months": 12},
+        "tyre_inspection": {"km": 15000, "months": 18},
+        "battery": {"months": 24}
+      }
+    }
+  },
+  "ble_support": {
+    "phase": "Beta",
+    "supported_bikes": ["TVS Apache RR310", "Royal Enfield Meteor 350"],
+    "gatt_characteristics": {
+      "odometer": "manufacturer_specific",
+      "speed": "0x2A67",
+      "battery": "0x2A19"
+    },
+    "fallback": "Manual odometer entry"
+  },
+  "performance_requirements": {
+    "app_launch_cold_start_ms": 2000,
+    "dashboard_render_ms": 500,
+    "trip_save_local_ms": 1000,
+    "cloud_sync_seconds": 10,
+    "battery_drain_8h_tracking_percent": 10,
+    "distance_accuracy_percent": 5,
+    "crash_free_rate_percent": 99.5,
+    "notification_delivery_rate_percent": 95
+  },
+  "third_party_services": [
+    {
+      "name": "Firebase Auth",
+      "purpose": "User authentication",
+      "plan": "Spark (free)",
+      "monthly_cost_usd": 0
+    },
+    {
+      "name": "Firebase Firestore",
+      "purpose": "Cloud database",
+      "plan": "Blaze",
+      "monthly_cost_usd": 25
+    },
+    {
+      "name": "Firebase Cloud Messaging",
+      "purpose": "Push notifications",
+      "plan": "Free",
+      "monthly_cost_usd": 0
+    },
+    {
+      "name": "Firebase Storage",
+      "purpose": "Receipt uploads",
+      "plan": "Blaze",
+      "monthly_cost_usd": 5
+    },
+    {
+      "name": "Firebase Crashlytics",
+      "purpose": "Crash reporting",
+      "plan": "Free",
+      "monthly_cost_usd": 0
+    },
+    {
+      "name": "Mapbox",
+      "purpose": "Offline maps",
+      "plan": "Free tier",
+      "monthly_cost_usd": 0
+    },
+    {
+      "name": "Google Maps API",
+      "purpose": "Service center locator",
+      "plan": "Pay-as-go",
+      "monthly_cost_usd": 10
+    }
+  ],
+  "roadmap": [
+    {
+      "phase": "MVP",
+      "duration_months": 3,
+      "dev_hours": 500,
+      "target_users": 100,
+      "kpis": {
+        "onboarding_completion_percent": 85,
+        "crash_rate_percent": 5,
+        "rating": 4.0
+      }
+    },
+    {
+      "phase": "Beta",
+      "duration_months": 2,
+      "dev_hours": 300,
+      "target_users": 500,
+      "kpis": {
+        "day_7_retention_percent": 40,
+        "day_30_retention_percent": 20,
+        "rating": 4.3
+      }
+    },
+    {
+      "phase": "v1.0",
+      "duration_months": 1,
+      "dev_hours": 200,
+      "target_users": 10000,
+      "kpis": {
+        "downloads_month_1": 10000,
+        "active_users_month_1": 2000,
+        "rating": 4.5
+      }
+    },
+    {
+      "phase": "v1.1",
+      "duration_months": "Ongoing",
+      "kpis": {
+        "paid_conversion_percent": 5,
+        "mrr_usd": 5000
+      }
+    }
+  ],
+  "monetization": {
+    "model": "Freemium",
+    "free_tier": [
+      "GPS tracking (unlimited)",
+      "Maintenance reminders",
+      "Offline mode",
+      "1 bike",
+      "Local storage only"
+    ],
+    "pro_tier": {
+      "price_monthly_usd": 2.99,
+      "price_annual_usd": 29.99,
+      "features": [
+        "Cloud sync (multi-device)",
+        "Receipt upload (100 MB)",
+        "Cost tracking",
+        "Predictive maintenance",
+        "Multi-vehicle (up to 5 bikes)",
+        "Priority support"
+      ]
+    },
+    "revenue_projection_year_1": {
+      "total_users": 10000,
+      "conversion_rate_percent": 5,
+      "paid_users": 500,
+      "annual_revenue_usd": 17940
+    }
+  },
+  "success_metrics_year_1": {
+    "downloads": 50000,
+    "mau": 10000,
+    "retention_day_7_percent": 40,
+    "retention_day_30_percent": 20,
+    "paid_conversion_percent": 5,
+    "mrr_usd": 5000,
+    "nps": 50,
+    "crash_free_rate_percent": 99.5,
+    "app_store_rating": 4.5
+  }
+}

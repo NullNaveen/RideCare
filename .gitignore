@@ -1,0 +1,95 @@
+# .gitignore for React Native RideCare Project
+# 
+# Excludes build artifacts, dependencies, secrets, and IDE files
+
+# OSX
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# React Native
+.expo/
+.expo-shared/
+
+# iOS
+mobile/ios/Pods/
+mobile/ios/build/
+mobile/ios/*.xcworkspace
+mobile/ios/*.xcuserstate
+mobile/ios/DerivedData/
+mobile/ios/*.hmap
+mobile/ios/*.ipa
+mobile/ios/*.dSYM.zip
+mobile/ios/*.dSYM
+
+# Android
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/release/
+mobile/android/*.keystore
+mobile/android/*.jks
+mobile/android/app/google-services.json
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Bundle artifacts
+*.jsbundle
+
+# CocoaPods
+Pods/
+
+# VS Code
+.vscode/
+.history/
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Firebase
+mobile/ios/GoogleService-Info.plist
+firebase-debug.log
+
+# Testing
+coverage/
+.jest/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database
+*.db
+*.sqlite
+
+# Secrets
+secrets/
+*.key
+*.pem
+*.p12
+
+# Documentation build artifacts
+docs/_build/

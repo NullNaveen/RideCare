@@ -1,0 +1,581 @@
+openapi: 3.0.3
+info:
+  title: RideCare API
+  description: |
+    RideCare backend API for bike maintenance tracking.
+    All endpoints require Firebase Auth JWT token.
+  version: 1.0.0
+  contact:
+    name: RideCare Support
+    email: support@ridecare.app
+
+servers:
+  - url: https://us-central1-ridecare-app.cloudfunctions.net
+    description: Production (Firebase Cloud Functions)
+  - url: http://localhost:5001/ridecare-app/us-central1
+    description: Local emulator
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/trips:
+    post:
+      summary: Create or sync trips (bulk)
+      description: Upload trips from local device (offline sync)
+      tags:
+        - Trips
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trips:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Trip'
+      responses:
+        '200':
+          description: Trips synced successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  synced_count:
+                    type: integer
+                  trips:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        local_id:
+                          type: string
+                        firestore_id:
+                          type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    get:
+      summary: Get trip history (paginated)
+      tags:
+        - Trips
+      parameters:
+        - name: bike_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Trip history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trips:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trip'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+
+  /api/trips/{tripId}:
+    delete:
+      summary: Delete a trip
+      tags:
+        - Trips
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trip deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/bikes:
+    post:
+      summary: Create or update bike
+      tags:
+        - Bikes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bike'
+      responses:
+        '200':
+          description: Bike created/updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  bike_id:
+                    type: string
+    
+    get:
+      summary: Get user's bikes
+      tags:
+        - Bikes
+      responses:
+        '200':
+          description: List of bikes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bikes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bike'
+
+  /api/bikes/{bikeId}:
+    delete:
+      summary: Delete a bike
+      tags:
+        - Bikes
+      parameters:
+        - name: bikeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bike deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/maintenance/due:
+    get:
+      summary: Get due/overdue maintenance
+      tags:
+        - Maintenance
+      parameters:
+        - name: bike_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Due maintenance events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  due_soon:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MaintenanceEvent'
+                  overdue:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MaintenanceEvent'
+
+  /api/maintenance/complete:
+    post:
+      summary: Mark maintenance as complete
+      tags:
+        - Maintenance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                maintenance_id:
+                  type: string
+                completed_at:
+                  type: string
+                  format: date-time
+                completed_km:
+                  type: number
+                cost:
+                  type: number
+                notes:
+                  type: string
+                receipt_files:
+                  type: array
+                  items:
+                    type: string
+                    format: base64
+      responses:
+        '200':
+          description: Maintenance marked complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  next_due_km:
+                    type: number
+
+  /api/maintenance:
+    post:
+      summary: Create manual maintenance event
+      tags:
+        - Maintenance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaintenanceEvent'
+      responses:
+        '200':
+          description: Maintenance event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  maintenance_id:
+                    type: string
+
+  /api/receipts/upload:
+    post:
+      summary: Upload receipt (image/PDF)
+      tags:
+        - Receipts
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                maintenance_id:
+                  type: string
+      responses:
+        '200':
+          description: Receipt uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  url:
+                    type: string
+                    format: uri
+
+  /api/user/export:
+    get:
+      summary: Export user data (GDPR)
+      tags:
+        - User
+      responses:
+        '200':
+          description: User data exported as JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  bikes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bike'
+                  trips:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trip'
+                  maintenance:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MaintenanceEvent'
+
+  /api/user/account:
+    delete:
+      summary: Delete user account (GDPR)
+      tags:
+        - User
+      responses:
+        '200':
+          description: Account deletion scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Firebase Auth ID token
+  
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        settings:
+          type: object
+          properties:
+            notifications_push:
+              type: boolean
+            notifications_email:
+              type: boolean
+            theme:
+              type: string
+              enum: [light, dark, system]
+            telemetry_enabled:
+              type: boolean
+    
+    Bike:
+      type: object
+      required:
+        - nickname
+        - make
+        - model
+        - year
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        nickname:
+          type: string
+          example: My Splendor
+        make:
+          type: string
+          example: Hero
+          enum: [Hero, Bajaj, TVS, Honda, Royal Enfield, Yamaha, Suzuki, KTM, Other]
+        model:
+          type: string
+          example: Splendor Plus BS6
+        year:
+          type: integer
+          minimum: 2000
+          maximum: 2030
+        vehicle_type:
+          type: string
+          enum: [Motorcycle, Scooter, Moped]
+        variant:
+          type: string
+          example: BS6 FI
+        odometer_km:
+          type: number
+          format: float
+        bluetooth_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    Trip:
+      type: object
+      required:
+        - bike_id
+        - start_time
+        - end_time
+        - distance_km
+      properties:
+        id:
+          type: string
+        bike_id:
+          type: string
+        user_id:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        end_time:
+          type: string
+          format: date-time
+        start_lat:
+          type: number
+          format: double
+        start_lng:
+          type: number
+          format: double
+        end_lat:
+          type: number
+          format: double
+        end_lng:
+          type: number
+          format: double
+        distance_km:
+          type: number
+          format: float
+        avg_speed_kmh:
+          type: number
+          format: float
+        max_speed_kmh:
+          type: number
+          format: float
+        path:
+          type: string
+          description: Encoded polyline or GeoJSON
+        notes:
+          type: string
+        fuel_consumed_est:
+          type: number
+          format: float
+    
+    MaintenanceEvent:
+      type: object
+      required:
+        - bike_id
+        - type
+      properties:
+        id:
+          type: string
+        bike_id:
+          type: string
+        user_id:
+          type: string
+        type:
+          type: string
+          enum: [service, oil_change, chain_lube, brake_check, tyre_inspection, battery]
+        km_due_at:
+          type: number
+          format: float
+        date_due:
+          type: string
+          format: date
+          nullable: true
+        notified:
+          type: boolean
+        completed:
+          type: boolean
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_km:
+          type: number
+          format: float
+          nullable: true
+        cost:
+          type: number
+          format: float
+          nullable: true
+        notes:
+          type: string
+        receipt_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+        created_at:
+          type: string
+          format: date-time
+    
+    MaintenanceRule:
+      type: object
+      properties:
+        id:
+          type: string
+        bike_id:
+          type: string
+        type:
+          type: string
+          enum: [service, oil_change, chain_lube, brake_check, tyre_inspection, battery]
+        interval_km:
+          type: number
+          format: float
+        interval_days:
+          type: integer
+        logic:
+          type: string
+          enum: [OR, AND]
+          default: OR
+        recurring:
+          type: boolean
+          default: true
+        enabled:
+          type: boolean
+          default: true
+    
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+  
+  responses:
+    Unauthorized:
+      description: Unauthorized (missing or invalid token)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: unauthorized
+            message: Invalid or missing Firebase Auth token
